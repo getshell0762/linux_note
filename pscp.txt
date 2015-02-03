@@ -1,3 +1,13 @@
 文件传输
 1.windows系统传输至linux系统
   例如:pscp 404.tar.gz root@120.24.241.128:/home/software
+ 
+ubuntu安装chrome
+  1.下载
+    32:wget https://dl.google.com/linux/direct/google-chrome-stable_current_i386.deb
+    64:wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  2.安装
+    32:sudo dpkg -i google-chrome-stable_current_i386.deb
+    64:sudo dpkg -i google-chrome-stable_current_amd64.deb 
+  3.安装不成功解决方法
+    运行:sudo apt-get install -f
