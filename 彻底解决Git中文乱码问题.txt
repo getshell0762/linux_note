@@ -1,0 +1,67 @@
+现在随着Githut和SNS的流行，Social Code也像Facebook在世界中流行一样，在程序猿中流行开来。而且有犹如星星之火，在程序猿中燎原开来。有Linus这样的大牛作为发明人，有Linux Kernel这样的庞大应用作为“小白鼠”做测试，再有Github这样开放的网络交流平台，Git想不火都难。所以，今天D瓜哥也赶赶时髦，玩转一下Git，这个版本管理工具。
+
+　　Git，这个版本管理工具是美国发明的，所以对中文的原生支持性不是很好。在使用时，主要会遇到三个场景对中文的支持性比较差，严重影响用户体验。下面，D瓜哥就针对这三个使用场景进行分别的描述。另外，特别说明一下，我平时工作、学习最主要的系统是Windows 7。Git使用的是msysgit。所以，以下的解决方案是针对Windows系统的解决方案。
+
+一、ls -l 显示文件列表
+
+　　想想刚玩Git那会，下个msysgit，瞬间装好，信心爆棚，无视GUI（我比较喜欢Linux以及命令行），cd到某个目录下，ls查看文件，傻眼了。MD，竟然都是乱码，着实无语加郁闷了一把！这是该怎么办呢？
+
+　　其实，很简单。只需要修改一下配置信息就能解决问题。这里先做个假设，假设你Git的安装目录是%GIT_HOME%。修改步骤如下：
+
+　　使用文本编辑器打开文件%GIT_HOME%\etc\gitconfig，将下面显示的三个选项的字符集修改成如下：
+
+1
+[gui]
+2
+     encoding = utf-8
+3
+[i18n]
+4
+     commitencoding = gbk
+5
+[svn]
+6
+     pathnameencoding = gbk
+　　通过这里的设置，打开Git环境中的中文支持。另外，需要特意说明一下，虽然pathnameencoding设置了文件路径的中文支持，但是为了防止不必要的麻烦出现，同时也为了提高在Bash中快速的进入某个路径，推荐使用英文路径，不要使用中文路径。
+
+　　然后，使用文本编辑器打开文件%GIT_HOME%\etc\git-completion.bash，然后再其中添加如下内容：
+
+1
+alias ls='ls --show-control-chars --color=auto'
+　　我个人比较喜欢列表显示文件，但是msysgit安装后，不支持ll。所以，就自己手动添加上支持。在上面那行配置的下面，添加下面这行配置：
+
+1
+alias ll='ls -l'
+　　玩Linux的人，应该都能看出来，其实这只是Linux命令中，给命令起了一个别名而已。
+
+　　最后，使用文本编辑器打开文件%GIT_HOME%\etc\profile，将下面的这个配置的字符集设置成如下：
+
+1
+export LESSCHARSET=utf-8    #或gbk
+　　到这里，就大功告成了。你在Bash中，试一下，ls或者ll，是不是看到了久违的中文呢？
+
+二、提交中文Commit Log
+
+　　既然使用Git，那么肯定是要文件修改后，肯定是要提交的。但是，刚刚安装好后msysgit对Commit Log的中文支持是在是忍无可忍。没办法，这时还是要“自己动手，丰衣足食”啊。
+
+　　其实，msysgit对中文Commit Log主要是因为默认的编辑器vi对中文的支持不好。所以，把默认编辑器修改成一个对中文支持比较好的编辑器即可。对于编辑器，我比较喜欢vim（在Windows下就是gVim），下面就把默认编辑器修改成gVim。步骤如下：
+
+打开目录GIT_HOME%\bin\；
+找到vi或者vim文件（注意：没有后缀。），复制一份出来命名gvim；
+，使用文本编辑器打开gvim，把里面的exec /share/vim/vim73/gvim 改成自己的Gvim目录，D瓜哥的是exec /C/Vim/vim73/gvim
+运行msysgit Bash，执行命令git config –global core.editor gvim
+　　到这里，把默认编辑器已经修改成了gVim。另外，还需要修改一下msysgit的配置项。使用文本编辑器打开文件%GIT_HOME%\etc\inputrc，修改下面两个配置项如下：
+
+1
+set output-meta on
+2
+set convert-meta off
+　　我第一次在修改完这些配置后，提交修改中还是不能很好的支持地支持中文。后来发现，主要是使用方法不对。这里，给大家提个醒，提交时应该使用如下指令：
+
+1
+git commit -a
+　　注意，不要加-m的参数。否则就不能使用gVim了，也就不能支持中文了。
+
+三、提交文件名为中文的文件
+
+　　其实，D瓜哥也不知道如何修改才能很好的支持中文。不过，这里有一个取巧的方法：一般同时修改的文件都是相关的文件。所以，在添加或者提交时，可以使用-a参数，把几个文件同时添加或提交。
